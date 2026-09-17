@@ -1,8 +1,24 @@
-tasks = []
+import json
+
+FILE_NAME = "tasks.json"
+
+try:
+    with open(FILE_NAME, "r") as file:
+        tasks = json.load(file)
+except FileNotFoundError:
+    tasks = []
 
 def add_task():
     task = input("Enter your study task: ")
-    tasks.append({"task": task, "completed": False})
+
+    tasks.append({
+        "task": task,
+        "completed": False
+    })
+
+    with open(FILE_NAME, "w") as file:
+        json.dump(tasks, file, indent=4)
+
     print("Task added successfully!")
 
 
@@ -24,10 +40,18 @@ def complete_task():
     if not tasks:
         return
 
-    number = int(input("Enter task number to complete: "))
+    try:
+        number = int(input("Enter task number to complete: "))
+    except ValueError:
+        print("Please enter a valid task number.")
+        return
 
     if 1 <= number <= len(tasks):
         tasks[number - 1]["completed"] = True
+
+        with open(FILE_NAME, "w") as file:
+            json.dump(tasks, file, indent=4)
+
         print("Task completed!")
     else:
         print("Invalid task number.")
